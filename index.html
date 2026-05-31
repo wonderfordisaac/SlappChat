@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WanderSlapp</title>
     <style>
-        /* Kaonekedwe kofatsa kamene kakuonetsa kuti App ikutsegula mwa liwiro */
         body {
             margin: 0;
             padding: 0;
-            background-color: #121212; /* Sinthani kukhala mtundu wa App yanu */
+            background-color: #121212;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -17,9 +16,7 @@
             font-family: Arial, sans-serif;
             color: white;
         }
-        .loader {
-            text-align: center;
-        }
+        .loader { text-align: center; }
     </style>
 </head>
 <body>
@@ -29,27 +26,35 @@
     </div>
 
     <script>
-        // Kalinki kanu kosasintha ka Ngrok kaja kayikeni pawa:
+        // Kalinki kanu kosasintha ka Ngrok (Gwiritsani ntchito HTTPS)
         const NGROK_URL = "https://rebuilt-suburb-these.ngrok-free.dev/PAYMENT/auth.php";
 
-        // Kupanga Fetch yomwe ikubyola Ngrok kuseri kwa mchenga
-        fetch(NGROK_URL, {
-            method: 'GET',
-            headers: {
-                'ngrok-skip-browser-warning': 'true' // Ichi ndicho chinsinsi chophwanyira uthenga uja!
+        // KUGWIRISITSA NTCHITO "XMLHttpRequest" M'MALO MWA FETCH 
+        // Izi zimathandiza kuika ma custom headers popanda masakatuli ena kukana chifukwa cha CORS
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", NGROK_URL, true);
+        
+        // Ichi ndicho chinsinsi chomwe Ngrok inanena chija, tikuchitumiza mwaukatswiri:
+        xhr.setRequestHeader("ngrok-skip-browser-warning", "any-value");
+        
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    // Ngati zinthu zayenda bwino, tikulowetsa code ya PHP mu foni ya user
+                    document.open();
+                    document.write(xhr.responseText);
+                    document.close();
+                } else {
+                    document.getElementById('loading-text').innerHTML = "<h2>Network error. Chonde tsegulani kachiwiri.</h2>";
+                }
             }
-        })
-        .then(response => response.text())
-        .then(html => {
-            // Finthu yafika! Tikuloŵetsa PHP yonse mwachindunji mu browser ya user
-            document.open();
-            document.write(html);
-            document.close();
-        })
-        .catch(error => {
-            document.getElementById('loading-text').innerHTML = "<h2>Network error. Chonde yesani nazo kachiwiri.</h2>";
-            console.error('Error:', error);
-        });
+        };
+        
+        xhr.onerror = function() {
+            document.getElementById('loading-text').innerHTML = "<h2>Network error. Chonde yesani kachiwiri.</h2>";
+        };
+        
+        xhr.send();
     </script>
 </body>
 </html>

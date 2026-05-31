@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WanderSlapp</title>
+    <style>
+        /* Kaonekedwe kofatsa kamene kakuonetsa kuti App ikutsegula mwa liwiro */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #121212; /* Sinthani kukhala mtundu wa App yanu */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+        .loader {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loader" id="loading-text">
+        <h2>Loading WanderSlapp...</h2>
+    </div>
+
+    <script>
+        // Kalinki kanu kosasintha ka Ngrok kaja kayikeni pawa:
+        const NGROK_URL = "http://rebuilt-suburb-these.ngrok-free.dev/PAYMENT/auth.php";
+
+        // Kupanga Fetch yomwe ikubyola Ngrok kuseri kwa mchenga
+        fetch(NGROK_URL, {
+            method: 'GET',
+            headers: {
+                'ngrok-skip-browser-warning': 'true' // Ichi ndicho chinsinsi chophwanyira uthenga uja!
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            // Finthu yafika! Tikuloŵetsa PHP yonse mwachindunji mu browser ya user
+            document.open();
+            document.write(html);
+            document.close();
+        })
+        .catch(error => {
+            document.getElementById('loading-text').innerHTML = "<h2>Network error. Chonde yesani nazo kachiwiri.</h2>";
+            console.error('Error:', error);
+        });
+    </script>
+</body>
+</html>
